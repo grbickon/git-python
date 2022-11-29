@@ -12,20 +12,24 @@ def write_file(path, data):
 		
 def init(repo):
 	"""Create directory for repo and initialize .git directory."""
-	os.mkdir(repo)
-	os.mkdir(os.path.join(repo, '.git'))
-	for name in ['objects', 'refs', 'refs/heads']:
-		os.mkdir(os.path.join(repo, '.git', name))
-	write_file(os.path.join(repo,'.git', 'HEAD'),
-			   b'ref: refs/heads/master')
-	print('initialized empty repository: {}'.format(repo))
+	try:
+		os.mkdir(repo)
+		os.mkdir(os.path.join(repo, '.git'))
+		for name in ['objects', 'refs', 'refs/heads']:
+			os.mkdir(os.path.join(repo, '.git', name))
+		write_file(os.path.join(repo,'.git', 'HEAD'),
+				   b'ref: refs/heads/master')
+	except OSError as error:
+		print(error)
+	else:
+		print('initialized empty repository: {}'.format(repo))
 	
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	sub_parsers = parser.add_subparsers(dest='command', metavar='command')
 	sub_parsers.required = True
 	
-	# git-python init
+	# git init
 	subparser = sub_parsers.add_parser('init', help='initialize a new repo')
 	subparser.add_argument('repo', help='directory name for new repo')
 	
