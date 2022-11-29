@@ -16,8 +16,14 @@ class TestInitSuccess(unittest.TestCase):
 	def tearDown(self):
 		shutil.rmtree('temp')
 	
-class TestMethodsError(unittest.TestCase):
-	pass
+class TestInitException(unittest.TestCase):
+		
+	def test(self):
+		path = "TestInitException"
+		os.mkdir(path)
+		self.assertRaises(OSError, git.init, path)
+		os.rmdir(path)
+	
 	
 if __name__ == '__main__':
 	unittest.main()

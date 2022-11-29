@@ -21,6 +21,7 @@ def init(repo):
 				   b'ref: refs/heads/master')
 	except OSError as error:
 		print(error)
+		raise
 	else:
 		print('initialized empty repository: {}'.format(repo))
 	
