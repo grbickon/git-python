@@ -48,9 +48,13 @@ def hash_object(data, obj_type, write=True):
 	sha1 = hashlib.sha1(full_data).hexdigest()
 	if write:
 		path = os.path.join('.git', 'objects', sha1[:2], sha1[2:])
-		if not os.path.exists(path):
-			os.makedirs(os.path.dirname(path), exist_ok=True)
-			write_file(path, zlib.compress(full_data))
+		try:
+			if not os.path.exists(path):
+				os.makedirs(os.path.dirname(path), exist_ok=True)
+				write_file(path, zlib.compress(full_data))
+		except OSError as error:
+			print(error)
+			raise
 	return sha1
 	
 if __name__ == '__main__': # pragma: no cover
