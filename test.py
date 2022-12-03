@@ -45,8 +45,13 @@ class TestHashObjectSuccess(unittest.TestCase):
 			git.hash_object(b'',self.types[i],True)
 			path = os.path.join('.git', 'objects', self.hashes[i][:2], self.hashes[i][2:])
 			self.assertTrue(os.path.exists(path))
-			self.assertEqual(git.read_file(path), zlib.compress((self.types[i] + ' 0\x00').encode()))
+			self.assertEqual(git.read_file(path), 
+							 zlib.compress((self.types[i] + ' 0\x00').encode()))
 		
+	def testFindObjects(self):
+		for sha1 in self.hashes:
+			path = os.path.join('.git', 'objects', sha1[:2], sha1[2:])
+			self.assertEqual(path, git.find_object(sha1))
 		
 	def tearDown(self):
 		shutil.rmtree('temp')
