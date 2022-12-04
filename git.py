@@ -65,6 +65,8 @@ def find_object(sha1_prefix):
 	if len(sha1_prefix) < 2:
 		raise ValueError('hash prefix must be 2 or more characters')
 	obj_dir = os.path.join('.git', 'objects', sha1_prefix[:2])
+	if not os.path.exists(obj_dir):
+		raise ValueError('directory {} not found'.format(obj_dir))
 	rest = sha1_prefix[2:]
 	objects = [name for name in os.listdir(obj_dir) if name.startswith(rest)]
 	if not objects:

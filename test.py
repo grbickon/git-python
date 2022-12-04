@@ -25,7 +25,7 @@ class TestInitException(unittest.TestCase):
 		self.assertRaises(OSError, git.init, path)
 		os.rmdir(path)
 
-class TestHashObjectSuccess(unittest.TestCase):
+class TestHashSuccess(unittest.TestCase):
 
 	def setUp(self):
 		git.init('temp')
@@ -55,6 +55,14 @@ class TestHashObjectSuccess(unittest.TestCase):
 		
 	def tearDown(self):
 		shutil.rmtree('temp')
+		
+class TestHashException(unittest.TestCase):
+	def testFindObjectLenException(self):
+		self.assertRaises(ValueError, git.find_object, '')
+		self.assertRaises(ValueError, git.find_object, 'a')
 	
+	def testFindObjectNoFolderException(self):
+		self.assertRaises(ValueError, git.find_object, 'abcd')
+		
 if __name__ == '__main__':
 	unittest.main()
