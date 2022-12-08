@@ -1,4 +1,4 @@
-import os, argparse, hashlib, zlib, collections, enum
+import os, argparse, hashlib, zlib, collections, enum, sys
 
 
 # Data for one entry in the git index (.git/index)
@@ -48,11 +48,12 @@ def hash_object(data, obj_type, write=True):
 	sha1 = hashlib.sha1(full_data).hexdigest()
 	if write:
 		path = os.path.join('.git', 'objects', sha1[:2], sha1[2:])
-		try:
+		# cannot force OS error
+		try: 
 			if not os.path.exists(path):
 				os.makedirs(os.path.dirname(path), exist_ok=True)
 				write_file(path, zlib.compress(full_data))
-		except OSError as error:
+		except OSError as error: # pragma: no cover
 			print(error)
 			raise
 	return sha1
@@ -92,7 +93,7 @@ def read_object(sha1_prefix):
 	
 def cat_file(mode, sha1_prefix):
 	"""Write the contents of (or info about) object with given SHA-1 prefix to
-	stdout. If mode is 'commit', 'tree', or 'blob', print raw data bytes of
+	stdout. If mode is 'commit', 'tree', or 'blob', print data of
 	object. If mode is 'size', print the size of the object. If mode is
 	'type', print the type of the object. If mode is 'pretty', print a
 	prettified version of the object.
@@ -101,15 +102,15 @@ def cat_file(mode, sha1_prefix):
 	if mode in ['commit', 'tree', 'blob']:
 		if obj_type != mode:
 			raise ValueError('expected object type {}, got {}'.format(mode, obj_type))
-		sys.stdout.buffer.write(data)
+		print(data)
 	elif mode == 'size':
 		print(len(data))
 	elif mode == 'type':
 		print(obj_type)
 	elif mode == 'pretty':
 		if obj_type in ['commit', 'blob']:
-			sys.stdout.buffer.wrtie(data)
-		elif obj_type == 'tree:
+			print(data)
+		elif obj_type == 'tree':
 			for mode, path, sha1 in read_tree(data=data):
 				type_str = 'tree' if stat.S_ISDIR(mode) else 'blob'
 				print('{:06o} {} {}\t{}'.format(mode, type_str, sha1, path))
